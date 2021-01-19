@@ -4,7 +4,6 @@
 class TwoWayList
 {
 	public int $index = 0;
-
 	private int $data;
 	private ?TwoWayList $next = null;
 	private ?TwoWayList $prev = null;
