@@ -63,13 +63,13 @@ class Structure
 				return "Value {$v} cannot be found. Ended at: {$depth}";
 			}
 			$depth += 1;
-			return $this->leftChild->search($v, $depth);
+			return $this->leftChild->_search($v, $depth);
 		} else if ($v > $this->value) {
 			if ($this->rightChild === null) {
 				return "Value {$v} cannot be found. Ended at: {$depth}";
 			}
 			$depth += 1;
-			return $this->rightChild->search($v, $depth);
+			return $this->rightChild->_search($v, $depth);
 		} else {
 			return "Found {$v} at {$depth}";
 		}
