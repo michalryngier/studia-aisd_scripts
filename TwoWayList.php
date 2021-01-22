@@ -326,14 +326,24 @@ $list->reverse();
 $list->print();
 $list->reverse();
 
+echo PHP_EOL . "Usuń pierwszy index: " . PHP_EOL;
+$list->removeFirst();
+$list->print();
+
+echo PHP_EOL . "Wstaw index na nowo: " . PHP_EOL;
+$list->insert(9, 0);
+$list->print();
+
 echo PHP_EOL . "Lista cykliczna: " . PHP_EOL;
 $list->toCyclic();
 $list->printCyclic();
+echo PHP_EOL;
 
 echo PHP_EOL . "Lista cykliczna wstecz: " . PHP_EOL;
 $list->reverseCyclic();
 $list->printCyclic();
+echo PHP_EOL;
 
 $list->insert(100, 10);
-echo PHP_EOL . "Lista cykliczna wstecz + 100 na końcu: " . PHP_EOL;
+echo PHP_EOL . "Lista cykliczna wstecz + insert 100 na nowym ostatnim indexie: " . PHP_EOL;
 $list->printCyclic();
