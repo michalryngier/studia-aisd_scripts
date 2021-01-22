@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * Class TwoWayList
+ */
 class TwoWayList
 {
 	public ?int $data = null;
@@ -15,22 +18,38 @@ class TwoWayList
 
 // Powinny być dwa pliki, ale nie chcę robić bałaganu w czymś tak małym.
 
+/**
+ * Class TwoWayListHelper
+ */
 class TwoWayListHelper
 {
 	public ?TwoWayList $head = null;
 
 	public function __construct(?TwoWayList $head)
 	{
-		$this->sethead($head);
+		$this->setHead($head);
 	}
 
-	public function sethead(?TwoWayList $head)
+	/**
+	 * Set list head/
+	 * @param TwoWayList|null $head
+	 */
+	public function setHead(?TwoWayList $head)
 	{
 		$this->head = $head;
 	}
 
+	/**
+	 * Inserts element at given index.
+	 * @param int $value
+	 * @param int|null $index
+	 * @return bool
+	 */
 	public function insert(int $value, ?int $index = null) : bool
 	{
+		if ($this->isCyclic()) {
+			return $this->_insertIntoCyclic($value, $index, $this->head);
+		}
 		return $this->_insert($value, $index, $this->head);
 	}
 
@@ -61,6 +80,37 @@ class TwoWayListHelper
 		return $this->_insert($value, $index - 1, $head->next);
 	}
 
+	private function _insertIntoCyclic(int $value, ?int $index, ?TwoWayList &$head) : bool
+	{
+		if ((is_null($index) || $index === 1) && is_null($head->next->prev)) {
+			$newList = new TwoWayList($value);
+			$newList->next = $head->next;
+			$newList->prev = $head;
+			$head->next = $newList;
+			return true;
+		}
+		if ($index === 0) {
+			$lastElement = $this->_getCyclicLast($head);
+			$newList = new TwoWayList($value);
+			$newList->next = $head;
+			$lastElement->next = $newList;
+			$head = $newList;
+			return true;
+		}
+		if ($index === 1) {
+			$newList = new TwoWayList($value);
+			$newList->prev = $head;
+			$newList->next = $head->next;
+			$head->next = $newList;
+			return true;
+		}
+		return $this->_insertIntoCyclic($value, $index - 1, $head->next);
+	}
+
+	/**
+	 * Removes first element of the list.
+	 * @return bool
+	 */
 	public function removeFirst() : bool
 	{
 		if (is_null($this->head)) {
@@ -73,6 +123,11 @@ class TwoWayListHelper
 		return true;
 	}
 
+	/**
+	 * Removes element with given index.
+	 * @param int $index
+	 * @return bool
+	 */
 	public function remove(int $index) : bool
 	{
 		return $this->_remove($index, $this->head);
@@ -105,6 +160,9 @@ class TwoWayListHelper
 		return $this->_remove($index - 1, $head->next);
 	}
 
+	/**
+	 * Prints all elements in list.
+	 */
 	public function print() : void
 	{
 		echo $this->_print($this->head) . PHP_EOL;
@@ -118,6 +176,10 @@ class TwoWayListHelper
 		return (string) $head->data . ", " . (string) $this->_print($head->next);
 	}
 
+	/**
+	 * Reverses the list.
+	 * @return bool
+	 */
 	public function reverse() : bool
 	{
 		if (is_null($this->head->next)) {
@@ -147,6 +209,10 @@ class TwoWayListHelper
 		return $newList->prev;
 	}
 
+	/**
+	 * Changes the list into cyclic list.
+	 * @return bool
+	 */
 	public function toCyclic() : bool
 	{
 		return $this->_toCyclic($this->head);
@@ -161,6 +227,10 @@ class TwoWayListHelper
 		return $this->_toCyclic($list->next);
 	}
 
+	/**
+	 * Reverses the cyclic list. Do not use with non-cyclic list.
+	 * @return bool
+	 */
 	public function reverseCyclic() : bool
 	{
 		if (is_null($this->head->next)) {
@@ -189,6 +259,7 @@ class TwoWayListHelper
 			$newList->prev->next = $newList;
 			return $this->_reverseCyclic($copy->next, $newList->prev);
 		}
+		$newList->prev = null;
 		return $newList;
 	}
 
@@ -200,6 +271,9 @@ class TwoWayListHelper
 		return $this->_getCyclicLast($list->next);
 	}
 
+	/**
+	 * Prints the cyclic list. Do not use with non-cyclic list.
+	 */
 	public function printCyclic() : void
 	{
 		echo $this->_printCyclic($this->head);
@@ -212,6 +286,25 @@ class TwoWayListHelper
 		}
 		$string .= $head->data . ", ";
 		return $this->_printCyclic($head->next, $string);
+	}
+
+	public function isCyclic() : bool
+	{
+		return $this->_isCyclic($this->head);
+	}
+
+	private function _isCyclic(?TwoWayList $head) : bool
+	{
+		if (is_null($head)) {
+			return false;
+		}
+		if (is_null($head->next)) {
+			return false;
+		}
+		if (is_null($head->next) === false && is_null($head->next->prev)) {
+			return true;
+		}
+		return $this->_isCyclic($head->next);
 	}
 }
 
@@ -241,4 +334,6 @@ echo PHP_EOL . "Lista cykliczna wstecz: " . PHP_EOL;
 $list->reverseCyclic();
 $list->printCyclic();
 
-//var_dump($list);
+$list->insert(100, 10);
+echo PHP_EOL . "Lista cykliczna wstecz + 100 na końcu: " . PHP_EOL;
+$list->printCyclic();

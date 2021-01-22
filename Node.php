@@ -270,38 +270,8 @@ class Node
 		if (is_null($node->value) === false) {
 			$values[] = $node->value;
 		}
-//		if (is_null($node->leftChild) === false && $node->value - $node->leftChild->value < 2) {
-//			$node->leftChild->value += 2;
-//		}
 		return $values;
 	}
-
-	/**
-	 * @param int $var
-	 */
-	public function exam(int $var)
-	{
-		$this->_exam($this, $var);
-	}
-
-	private function _exam(Node $node, int $var)
-	{
-		while (is_null($node) === false) {
-			if (is_null($node->leftChild) === false) {
-				$node->value = $node->leftChild->value + $var;
-				$node->_exam($node->leftChild, $var + 1);
-			}
-			$node = $node->rightChild;
-		}
-	}
-}
-
-function mystery(?Node $T)
-{
-	if (is_null($T)) {
-		return 0;
-	}
-	return (1 + mystery($T->leftChild) + mystery($T->rightChild));
 }
 
 function createBinaryTree(
@@ -326,31 +296,33 @@ function createBinaryTree(
 }
 
 $nd = createBinaryTree(
-//	[9,7,2,18,56,25,60,21,39,29,55,49,66,94,77,97],
-//	[5,20,4,6,0,7,9,15,30,13],
-//	[12,7,9,5,6,17,16,15,22],
 null,
-	100,
+	10,
 	1,
 	1000
 );
 
-//var_dump($nd->readPreorder());
-//var_dump($nd->readInorder());
-//var_dump($nd->readPostorder());
-//var_dump("Node: ", print_r($nd));
-//var_dump("Nodes: " . $nd->nodeCount());
-//var_dump("Leaves: " . $nd->leavesCount());
-//var_dump("Right children: " . $nd->rightChildrenCount());
-//var_dump("Height: " . $nd->treeHeight());
+echo PHP_EOL . "Tree: " . PHP_EOL;
+$nd->printTree();
 
-//$nd->printTree();
+echo PHP_EOL . "Mirror tree: " . PHP_EOL;
+$nd->mirrorTree()->printTree();
 
-//print_r($nd->readPreorder(363));
+echo PHP_EOL . "Nodes: " . $nd->nodeCount() . PHP_EOL;
 
-//$nd->printTree();
-//$nd->mirrorTree()->printTree();
+echo PHP_EOL . "Leaves: " . $nd->leavesCount() . PHP_EOL;
 
-$nd->exam(4);
+echo PHP_EOL . "Right children: " . $nd->rightChildrenCount() . PHP_EOL;
 
-print_r(mystery($nd));
+echo PHP_EOL . "Height: " . $nd->treeHeight() . PHP_EOL;
+
+echo PHP_EOL . "Preorder: " . PHP_EOL;
+print_r($nd->readPreorder());
+
+echo PHP_EOL . "Inorder: " . PHP_EOL;
+print_r($nd->readInorder());
+
+echo PHP_EOL . "Postorder: " . PHP_EOL;
+print_r($nd->readPostorder());
+
+
