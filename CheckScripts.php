@@ -18,7 +18,7 @@ function checkIfSearchIsValid(array $searchStack, int $value) : bool
 	if ($root > $value) {
 		for ($i = 1; $i < $stackLen - 1; $i++) {
 			if ($searchStack[$i] > $root) {
-				echo "Błąd wartości: {$searchStack[$i]}, root: {$root}";
+				echo "Błąd wartości: {$searchStack[$i]}, root: $root";
 				return false;
 			}
 			$newStack[] = $searchStack[$i];
@@ -26,7 +26,7 @@ function checkIfSearchIsValid(array $searchStack, int $value) : bool
 	} else if ($root < $value) {
 		for ($i = 1; $i < $stackLen - 1; $i++) {
 			if ($searchStack[$i] < $root) {
-				echo "Błąd wartości: {$searchStack[$i]}, root: {$root}";
+				echo "Błąd wartości: {$searchStack[$i]}, root: $root";
 				return false;
 			}
 			$newStack[] = $searchStack[$i];

@@ -3,15 +3,21 @@
 
 class OneWayList
 {
-	private int $data;
-	private ?OneWayList $next = null;
+	public ?int $data = null;
+	public ?OneWayList $next = null;
 
-	public function __construct(int $data)
+	public function __construct(?int $data = null)
 	{
 		$this->data = $data;
 	}
 
-	public function insert(int $value, int $i) : bool
+	/**
+	 * Inserts new value at specified index or at index = 0.
+	 * @param int $value
+	 * @param int $i
+	 * @return bool
+	 */
+	public function insert(int $value, int $i = 0) : bool
 	{
 		return $this->_insert($value, $i, $this);
 	}
@@ -20,8 +26,16 @@ class OneWayList
 	{
 		if (is_null($list)) {
 			return false;
-		}
-		if ($i === 1) {
+		} else if ($i === 0 && is_null($list->data)) {
+			$list->data = $value;
+			return true;
+		} else if ($i === 0) {
+			$newList = new OneWayList($list->data);
+			$newList->next = $list->next;
+			$list->data = $value;
+			$list->next = $newList;
+			return true;
+		} else if ($i === 1) {
 			$tmpChild = $list->next;
 			$list->next = new OneWayList($value);
 			$list->next->next = $tmpChild;
@@ -30,24 +44,43 @@ class OneWayList
 		return $list->_insert($value, $i - 1, $list->next);
 	}
 
-	public function remove(int $i) : bool
+	/**
+	 * Returns new list with specified index removed from this object.
+	 * @param int $i
+	 * @return OneWayList
+	 */
+	public function remove(int $i) : OneWayList
 	{
 		return $this->_remove($i, $this);
 	}
 
-	private function _remove(int $i, ?OneWayList $list) : bool
+	private function _remove(int $i, ?OneWayList &$list) : ?OneWayList
 	{
 		if (is_null($list)) {
-			return false;
+			return null;
+		}
+		if ($i === 0) {
+			if (is_null($list->next)) {
+				return null;
+			}
+			$newList = new OneWayList();
+			$newList->data = $list->next->data;
+			$newList->next = $list->next->next;
+			return $newList;
 		}
 		if ($i === 1) {
-				$tmpChild = $list->next->next;
-				$list->next = $tmpChild;
-			return false;
+			$tmpChild = $list->next->next;
+			$list->next = $tmpChild;
+			return $list;
 		}
 		return $list->_remove($i - 1, $list->next);
 	}
 
+	/**
+	 * Returns specified index value.
+	 * @param int $i
+	 * @return int|null
+	 */
 	public function read(int $i) : ?int
 	{
 		return $this->_read($i, $this);
@@ -64,6 +97,10 @@ class OneWayList
 		return $list->_read($i - 1, $list->next);
 	}
 
+	/**
+	 * Returns the list size.
+	 * @return int
+	 */
 	public function size() : int
 	{
 		return $this->_size($this, 0);
@@ -77,6 +114,9 @@ class OneWayList
 		return $list->_size($list->next, $size + 1);
 	}
 
+	/**
+	 *
+	 */
 	public function print()
 	{
 		$this->_print($this);
@@ -95,6 +135,9 @@ class OneWayList
 		$list->_print($list->next);
 	}
 
+	/**
+	 * Prints tle list backward
+	 */
 	public function printBackward()
 	{
 		echo $this->_printBackward($this);
@@ -108,12 +151,15 @@ class OneWayList
 		return $list->_printBackward($list->next) . ", " . $list->data;
 	}
 
+	/**
+	 * @return OneWayList|null
+	 */
 	public function destroy() : ?OneWayList
 	{
 		return $this->_destroy($this);
 	}
 
-	private function _destroy(?OneWayList $list) : ?OneWayList
+	private function _destroy(?OneWayList &$list) : ?OneWayList
 	{
 		if (is_null($list->next)) {
 			// destroy $list
@@ -124,39 +170,24 @@ class OneWayList
 	}
 }
 
-
 function createList(int $size) : ?OneWayList
 {
 	$success = true;
-	$list = new OneWayList(0);
+	$list = new OneWayList();
 	for ($i = 1; $i < $size; $i++) {
-		$success = $list->insert($i, $i);
+		$success = $list->insert($i, $i - 1);
 	}
 	return $success ? $list : null;
 }
 
 $list = createList(10);
 
-//var_dump($list);
-//
-//var_dump($list->read(4));
-//var_dump($list->read(5));
-//
-//$list->insert(100, 5);
-//
-//var_dump($list->read(4));
-//var_dump($list->read(5));
-//var_dump($list->read(6));
-//
-//$list->remove(5);
-//
-//var_dump($list->read(4));
-//var_dump($list->read(5));
-//var_dump($list->read(6));
+echo "3 index: " . $list->read(3) . PHP_EOL;
+echo "Lista:" . PHP_EOL;
+$list->print();
 
-//var_dump($list->destroy());
+echo PHP_EOL . "Lista wstecz: " . PHP_EOL;
+$list->printBackward();
 
-//$list->print();
-//echo PHP_EOL;
-//$list->printBackward();
-
+echo PHP_EOL . "Wielkość: " . PHP_EOL;
+echo $list->size();

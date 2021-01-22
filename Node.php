@@ -6,15 +6,15 @@
 
 class Node
 {
-	private ?Node $leftChild = null;
-	private ?Node $rightChild = null;
-	private int $value = 0;
+	public ?Node $leftChild = null;
+	public ?Node $rightChild = null;
+	public ?int $value = null;
 
 	/**
 	 * Create new Node with root value equals to given value.
 	 * @param int $value
 	 */
-	public function __construct(int $value)
+	public function __construct(?int $value = null)
 	{
 		$this->value = $value;
 	}
@@ -27,6 +27,10 @@ class Node
 	 */
 	public function addValue(int $value, int $depth = 0) : string
 	{
+		if (is_null($this->value)) {
+			$this->value = $value;
+			return "Value: {$value} added to root at {$depth}";
+		}
 		if ($value > $this->value) {
 			$depth += 1;
 			if ($this->rightChild === null) {
@@ -54,12 +58,7 @@ class Node
 	 * @param int $v
 	 * @return string
 	 */
-	public function search(int $v) : string
-	{
-		return $this->_search($v, 0);
-	}
-
-	private function _search(int $v, ?int $depth = 0) : string
+	public function search(int $v, ?int $depth = 0) : string
 	{
 		var_dump("Value: {$this->value}" );
 		if ($v < $this->value) {
@@ -67,13 +66,13 @@ class Node
 				return "Value {$v} cannot be found. Ended at: {$depth}";
 			}
 			$depth += 1;
-			return $this->leftChild->_search($v, $depth);
+			return $this->leftChild->search($v, $depth);
 		} else if ($v > $this->value) {
 			if ($this->rightChild === null) {
 				return "Value {$v} cannot be found. Ended at: {$depth}";
 			}
 			$depth += 1;
-			return $this->rightChild->_search($v, $depth);
+			return $this->rightChild->search($v, $depth);
 		} else {
 			return "Found {$v} at {$depth}";
 		}
@@ -250,7 +249,7 @@ class Node
 	 * Reads the Node by postorder.
 	 * @return array
 	 */
-	private function readPostorder() : array
+	public function readPostorder() : array
 	{
 		return $this->_readPostorder($this);
 	}
@@ -285,7 +284,7 @@ class Node
 		$this->_exam($this, $var);
 	}
 
-	private function _exam(Node $node, int $var) : void
+	private function _exam(Node $node, int $var)
 	{
 		while (is_null($node) === false) {
 			if (is_null($node->leftChild) === false) {
@@ -297,15 +296,22 @@ class Node
 	}
 }
 
+function mystery(?Node $T)
+{
+	if (is_null($T)) {
+		return 0;
+	}
+	return (1 + mystery($T->leftChild) + mystery($T->rightChild));
+}
+
 function createBinaryTree(
-	?int $rootValue = 10,
+	?array $values = null,
 	?int $numOfValues = 10,
 	?int $minValue = 0,
-	?int $maxValue = 100,
-	?array $values = null
+	?int $maxValue = 100
 ) : Node
 {
-	$nd = new Node($rootValue);
+	$nd = new Node();
 	if (is_null($values)) {
 		for ($i = 0; $i < $numOfValues; $i++) {
 			$rand = rand($minValue, $maxValue);
@@ -320,13 +326,13 @@ function createBinaryTree(
 }
 
 $nd = createBinaryTree(
-	12,
-	null,
-	null,
-	null,
-//	[9,7,2,18,56,25,60,21,39,29,55,49,66,94,77,97]
-//	[5,20,4,6,0,7,9,15,30,13]
-	[7,9,5,6,17,16,15,22]
+//	[9,7,2,18,56,25,60,21,39,29,55,49,66,94,77,97],
+//	[5,20,4,6,0,7,9,15,30,13],
+//	[12,7,9,5,6,17,16,15,22],
+null,
+	100,
+	1,
+	1000
 );
 
 //var_dump($nd->readPreorder());
@@ -346,4 +352,5 @@ $nd = createBinaryTree(
 //$nd->mirrorTree()->printTree();
 
 $nd->exam(4);
-print_r($nd->readInorder());
+
+print_r(mystery($nd));
