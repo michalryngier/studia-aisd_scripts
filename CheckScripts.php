@@ -37,7 +37,9 @@ function checkIfSearchIsValid(array $searchStack, int $value) : bool
 	return checkIfSearchIsValid($newStack, $value);
 }
 
-checkIfSearchIsValid(
-	[935, 278, 347, 621, 299, 392, 358, 363],
-	363
+$check = checkIfSearchIsValid(
+	[1000, 123, 122 , 98, 992, 32, 15, 200],
+	100
 );
+
+echo PHP_EOL . "Sprawdzenie: " . ($check ? 'możliwe' : 'błędne') . PHP_EOL;
